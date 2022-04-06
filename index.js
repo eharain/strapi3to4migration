@@ -3,7 +3,7 @@
 const fs = require("fs");
 
 const path = require("path");
-const zeptoSystemsStrapi3to4 = require("./lib");
+const migrator = require("./lib");
 
 const migrate = (strapi4Dir, strapi3Dir, snapshotPath, completedCallback) => {
 
@@ -21,24 +21,24 @@ const migrate = (strapi4Dir, strapi3Dir, snapshotPath, completedCallback) => {
 
 
     // load the source files from strapi 3 installation, it will scan api, componenets and extensions directories
-    let matches = zeptoSystemsStrapi3to4.loadStrapi3SourceMatches(strapi3Dir);
+    let matches = migrator.loadStrapi3SourceMatches(strapi3Dir);
     //migrate the loaded schema files to new format
-    let models = zeptoSystemsStrapi3to4.migrateSchemaModels(matches, strapi3Dir, strapi4Dir);
+    let models = migrator.migrateSchemaModels(matches, strapi3Dir, strapi4Dir);
 
     //migrate route files to new format
-    let routes = zeptoSystemsStrapi3to4.migrateRoutes(matches);
+    let routes = migrator.migrateRoutes(matches);
 
     //save the migrated files to new destination. schemas, routes, controllers, lifecyle files and services etc.
-    zeptoSystemsStrapi3to4.saveAllMatches(matches, models, strapi4Dir);
+    migrator.saveAllMatches(matches, models, strapi4Dir);
 
     //copy policies and apply few basic repplacments 
-    zeptoSystemsStrapi3to4.copyPolicies(path.join(strapi3Dir, "config/policies"), path.join(strapi4Dir, "src/policies"))
+    migrator.copyPolicies(path.join(strapi3Dir, "config/policies"), path.join(strapi4Dir, "src/policies"))
 
 
     //models.map(model => { return { source: model.source.schema, dest: model.source.dest } })
 
     //map the old and new database , these mapping will be used to generated migration sql files.
-    const db_mappings = zeptoSystemsStrapi3to4.createDbMapping(models, strapi3Dir, strapi4Dir);
+    const db_mappings = migrator.createDbMapping(models, strapi3Dir, strapi4Dir);
 
 
     //const fourDb = require("./helpers/db-migration-validator").initWithDefaultConfig(strapi4Dir);
@@ -55,13 +55,13 @@ const migrate = (strapi4Dir, strapi3Dir, snapshotPath, completedCallback) => {
 
             console.log("done with validate with query");
 
-            zeptoSystemsStrapi3to4.snaphotValidationResults(validationResults);
+            migrator.snaphotValidationResults(validationResults);
 
-            zeptoSystemsStrapi3to4.snapshotDbMappings(db_mappings, dbValidator.isInValid);
+            migrator.snapshotDbMappings(db_mappings, dbValidator.isInValid);
 
-            const qscombined = zeptoSystemsStrapi3to4.generateMySqlMigrationQueries(db_mappings);
+            const qscombined = migrator.generateMySqlMigrationQueries(db_mappings);
 
-            zeptoSystemsStrapi3to4.snapshotDatabaseMigrationScript(qscombined, threeDbCfg.database, fourDbCfg.database);
+            migrator.snapshotDatabaseMigrationScript(qscombined, threeDbCfg.database, fourDbCfg.database);
 
             console.log("done exit with success")
 
