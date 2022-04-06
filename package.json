@@ -1,0 +1,27 @@
+{
+  "author": "ejaz arain",
+  "name": "@zepto/strapi3to4",
+  "description": "strapi 3 to 4 automated migration script",
+  "homepage": "https://zeptosystems.com/strapi-3-to-strapi-4-migration/",
+  "version": "4.1.0",
+  "scripts": {"start": "index"},
+  "dependencies": {
+    "lodash": "4.17.21",
+    "mysql": "^2.18.1",
+    "pluralize": "^8.0.0"
+  },
+  "engines": {
+    "node": ">=12.22.0 <=16.x.x",
+    "npm": ">=6.0.0"
+  },
+  "keywords": [
+    "strapi",
+    "three to four",
+    "3 to 4",
+    "migration",
+    "script",
+    "library",
+    "zepto strapi migration",
+    "zepto systems strapi migration"
+  ]
+}
