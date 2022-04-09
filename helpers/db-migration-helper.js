@@ -25,7 +25,7 @@ function createdbMapping(models, strapi3Dir, strapi4Dir) {
         directMappingAddOptionalFields(mappings, model);
 
         //if (.length > 0) {
-        mappings = mapComponenetsAndMedia(mappings, model);
+        mappings = mapComponenetsAndMedia(mappings, model, models);
 
 
         const relations = dattribs.filter(attr => attr.hasOwnProperty("relation") && attr.hasOwnProperty("target")); //.filter(attr => !attr.hasOwnProperty("mappedBy"));
@@ -174,29 +174,37 @@ function expandModel(model) {
     return { sschema, dschema, sattribs, dattribs };
 }
 
-function mapComponenetsAndMedia(mappings, model) {
+function mapComponenetsAndMedia(mappings, model, models) {
+    models = models.filter(m => m.dest.location == 'components');
     const { sschema, dschema, sattribs, dattribs } = expandModel(model);
     mappings = [mappings, dattribs.filter(attrib => (['component', 'dynamiczone'].includes(attrib.type))).map(attr => {
         const xattrib = sattribs.find(a => a._an == attr._an);
-        return {
-            mapping: {
-                source: {
-                    table: sschema.collectionName + "_components",
-                    fields: [model.source.name + "_id", "component_id", "component_type", "field", "order"],
-                    $where: { field: xattrib._an, component_type: xattrib.component ? xattrib.component : xattrib.components }
-                },
-                dest: {
-                    table: dschema.collectionName + "_components",
-                    fields: ["entity_id", "component_id", "component_type", "field", "order"],
-                    $where: { field: attr._an, component_type: xattrib.component ? xattrib.component : xattrib.components },
-                    $update: { field: attr._an, component_type: model.dest.apiName },
-                },
-                direction: attr.type, inversedBy: false, valid: true, mappedBy: false, isTowWay: false
-            },
-            model
-        };
+        var fill = Array.isArray(xattrib.components) ? (m) => xattrib.components.includes(m.dest.apiName) : (m) => m.dest.apiName == xattrib.component;
+        const xcompmodel = models.filter(fill);
 
-    })].flat();
+        console.log(xcompmodel);
+
+        return xcompmodel.map(xc => {
+
+            return {
+                mapping: {
+                    source: {
+                        table: sschema.collectionName + "_components",
+                        fields: [model.source.name + "_id", "component_id", "component_type", "field", "order"],
+                        $where: { field: xattrib._an, component_type: xc.source.schema.collectionName }
+                    },
+                    dest: {
+                        table: dschema.collectionName + "_components",
+                        fields: ["entity_id", "component_id", "component_type", "field", "order"],
+                        $where: { field: attr._an, component_type: xc.source.schema.collectionName },
+                        $update: { field: attr._an, component_type: xc.dest.apiName },
+                    },
+                    direction: attr.type, inversedBy: false, valid: true, mappedBy: false, isTowWay: false
+                },
+                model
+            };
+        });
+    }).flat()].flat();
 
     mappings = [mappings, dattribs.filter(attrib => (['media'].includes(attrib.type))).map(attr => {
         const xattrib = sattribs.find(a => a._an == attr._an);

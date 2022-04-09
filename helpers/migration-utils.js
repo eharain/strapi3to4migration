@@ -13,8 +13,8 @@ const replaceSubstitutions = (text, type) => {
 
 const snapshot = (name, contents) => {
     const dir = process.env.snapshotPath = process.env.snapshotPath ? process.env.snapshotPath : path.join(__dirname, "../../", "migration-snapshots")
-
-    const fileName = path.join(dir, name + (typeof (contents) == "string" ? ".txt" : ".json"));
+    let ext = path.extname(name); ext = ext ? ext : (typeof (contents) == "string" ? ".txt" : ".json")
+    const fileName = path.join(dir, name + ext);
     ensureDirectoryExistence(fileName);
     if (typeof (contents) != "string") {
         const obj = { length: contents.length, /* time: new Date(),*/ snapshot: contents, };

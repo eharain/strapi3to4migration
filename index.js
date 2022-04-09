@@ -77,7 +77,7 @@ const migrate = (strapi4Dir, strapi3Dir, snapshotPath, completedCallback) => {
 /// please set the correct directories. 
 migrate(
     //strapi 4 a fresh instance directory .. please install latest version of strapi 4 . this is tested with 4.1.0
-    path.join(__dirname, "../../TrustList/strapi410/"),
+    path.join(__dirname, "../../TrustList/trustlist-backend/strapi4/"),
 
     // strapi 3 installation directory . this is the instance you are migrating to 4.
     path.join(__dirname, "../../TrustList/trustlist-backend/strapi/"),
