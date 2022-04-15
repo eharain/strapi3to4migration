@@ -234,18 +234,20 @@ function mapComponenetsAndMedia(mappings, model, models) {
 function directMappingAddOptionalFields(mappings, model) {
     const { sschema, dschema, sattribs, dattribs } = expandModel(model);
     const doptions = dschema.options;
-    if (doptions) {
-        const map0 = mappings[0].mapping;
-        if (doptions.increments == true) {
-            map0.source.fields.push("created_by", "updated_by");
-            map0.dest.fields.push("created_by_id", "updated_by_id");
-        }
-        if (doptions.timestamps == true) {
-            map0.source.fields.push("created_at", "updated_at");
-            map0.dest.fields.push("created_at", "updated_at");
-        } if (doptions.draftAndPublish == true) {
-            map0.source.fields.push("published_at");
-            map0.dest.fields.push("published_at");
+    if (model.dest.location != "components") {
+        if (doptions) {
+            const map0 = mappings[0].mapping;
+            if (doptions.increments == true) {
+                map0.source.fields.push("created_by", "updated_by");
+                map0.dest.fields.push("created_by_id", "updated_by_id");
+            }
+            if (doptions.timestamps == true) {
+                map0.source.fields.push("created_at", "updated_at");
+                map0.dest.fields.push("created_at", "updated_at");
+            } if (doptions.draftAndPublish == true) {
+                map0.source.fields.push("published_at");
+                map0.dest.fields.push("published_at");
+            }
         }
     }
 }

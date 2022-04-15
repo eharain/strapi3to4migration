@@ -46,6 +46,7 @@ const saveModel = (model, baseDir) => {
 
     switch (model.dest.type) {
         case "model":
+            u.cleanAttribs(model.dest.schema);
             content = JSON.stringify(model.dest.schema, null, 4);
             break;
         case "route":
