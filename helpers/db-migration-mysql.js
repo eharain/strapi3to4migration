@@ -3,7 +3,7 @@
 function combineQueries(qs) {
     const qscombined = {
         truncate: qs.map(q => q.truncate).reverse(),
-        insert_select: qs.map(q => q.insert + '\n' + q.select),
+        insert_select: qs.map(q => q.insert + ' ' + q.select),
         select: qs.map(q => q.select),
         insert: qs.map(q => q.insert),
         update: qs.filter(q => q.update).map(q => q.update),
@@ -42,7 +42,7 @@ function mappingToQueries(dbmaster) {
         const idCol = (d.dest.hasIdCol && d.source.hasIdCol) ? 'id`,`' : '';
 
         const query = {
-            insert: " INSERT  INTO   dest_db_name.`" + d.dest.table + "` (`" + idCol + d.dest.fields.join('`,`') + "`)",
+            insert: " INSERT  INTO   dest_db_name.`" + d.dest.table + "` (`" + idCol + d.dest.fields.join('`,`') + "`)" + " /*" + d.direction + " */",
             select: " SELECT `" + idCol + d.source.fields.join('`,`') + "` from source_db_name.`" + d.source.table + '` ' + $where(d.source.$where),
             truncate: " TRUNCATE TABLE dest_db_name.`" + d.dest.table + "`",
             direction: d.direction

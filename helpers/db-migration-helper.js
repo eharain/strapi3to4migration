@@ -81,7 +81,7 @@ function createdbMapping(models, strapi3Dir, strapi4Dir) {
                     if (isTowWay && inversedBy) {
                         mapping.source.table = model.source.schema.collectionName;
 
-                        mapping.source.fields = ['id', attr._an];
+                        mapping.source.fields = [attr._an, 'id'];
                         mapping.dest.fields = [
                             pluralize.singular(tmodel.dest.schema.collectionName) + '_id',
                             pluralize.singular(dschema.collectionName) + '_id'
@@ -126,6 +126,10 @@ function createdbMapping(models, strapi3Dir, strapi4Dir) {
 
                     }
                     break;
+                default:
+                    console.error("db mapping" + attr.relation +"  skipped ", attr.relation, isTowWay, inversedBy, mappedBy);
+                    break;
+
             }
 
             if (attr.collectionName) {
